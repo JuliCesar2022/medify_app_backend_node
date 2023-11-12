@@ -46,8 +46,7 @@ export default (io,MongoClient) => {
       socket.on('client:send:message',async(datal)=> {
 
         const horaActual = new Date();
-        horaActual.setHours(horaActual.getHours(8));
-
+        horaActual.setHours(horaActual.getHours()-5);
         const horas = horaActual.getHours();
         const minutos = horaActual.getMinutes();
         const amPm = horas >= 12 ? 'PM' : 'AM';

@@ -3,9 +3,9 @@
 
 
 const socket = io()
-const userId= 1;
+const userId= "1";    
 const nombre = 'juancho' 
-const FirebaseToken= "rteyuwioqpoeiruyurieopw´qwpeoiruytrueiowpqwoeiruyturieowpqwoeirutyurieowpoeiruytrueiwopqwoeirutyurieowpoeirutyurieowpeorituyg";
+const FirebaseToken= "ruytrueiwopqwoeirutyurieowpoeirutyurieowpeorituyg";
 
 
 socket.emit('client:iniEmit:conection',{userId : userId, FirebaseToken , nombre})

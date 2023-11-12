@@ -10,6 +10,8 @@ export default (io,MongoClient) => {
 
     changeStream.on('change', async (change) => {
 
+     try {
+
       let mensajes= await  getMessage(MongoClient) 
       console.log(change.fullDocument);
 
@@ -22,6 +24,10 @@ export default (io,MongoClient) => {
       disconnectUsers.forEach(user => {
         NotificationsController.sendNotify(user.FirebaseToken,user.nombre, change.fullDocument.mensaje)
       });
+      
+     } catch (error) {
+      
+     }
 
 
  
@@ -29,29 +35,22 @@ export default (io,MongoClient) => {
     
 
     io.on('connection', async (socket) => {
-      let data = null
+      var dataG = null
       
       socket.on('client:iniEmit:conection', async(datal)=>{
 
-        data = datal
-        setConectionByUserId(MongoClient,data,true)
+        dataG = datal
+        setConectionByUserId(MongoClient,dataG,true)
       })
 
-      socket.on('client:send:message',async(data)=> {
+      socket.on('client:send:message',async(datal)=> {
 
-        await MongoClient.collection(DBNames.mensajes).insertOne(data);
+        await MongoClient.collection(DBNames.mensajes).insertOne({...datal, ...dataG });
 
 
 
       } )
-      // cambiar un campo en mongo conected true
-      
-      // socket.emit('', {
-
-
-      // })
-
-      // socket.on('', async ( data )=>{ })
+  
 
 
       console.log('conectado....')
@@ -60,22 +59,13 @@ export default (io,MongoClient) => {
       
       
       socket.emit('server:refresh:mensajes', mensajes)
-
-      
-
-
-
     
 
       socket.on('disconnect', () => {
 
-        setConectionByUserId(MongoClient,data,false)  
-
-              // cambiar un campo en mongo conected false
-
+        setConectionByUserId(MongoClient,dataG,false)  
 
         console.log('Client disconnected');
-        // Realizar acciones adicionales si es necesario
       });
 
     
@@ -97,6 +87,7 @@ export default (io,MongoClient) => {
 
      console.log(data)
 
+     if(data == null){return;}
     const item = await MongoClient.collection(DBNames.config_chat_users).findOne({ userId: data.userId });
 
 

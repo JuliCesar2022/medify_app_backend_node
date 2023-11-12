@@ -45,7 +45,16 @@ export default (io,MongoClient) => {
 
       socket.on('client:send:message',async(datal)=> {
 
-        await MongoClient.collection(DBNames.mensajes).insertOne({...datal, ...dataG });
+        const horaActual = new Date();
+        const horas = horaActual.getHours();
+        const minutos = horaActual.getMinutes();
+
+        const hora  =  `${horas}:${minutos}`;
+        
+
+  
+
+        await MongoClient.collection(DBNames.mensajes).insertOne({...datal, ...dataG,hora: hora });
 
 
 

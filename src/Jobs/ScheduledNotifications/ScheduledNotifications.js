@@ -1,13 +1,6 @@
 import NotificationsController from '../../Controllers/NotificationsController.js';
 import { DBNames } from './../../db.js';
 // import axios from 'axios';
-class Medicamento {
-    constructor(fechaInicio, fechaFin, frecuenciaHoras) {
-        this.fechaInicio = fechaInicio; // Fecha de inicio en formato Date
-        this.fechaFin = fechaFin; // Fecha de fin en formato Date
-        this.frecuenciaHoras = frecuenciaHoras; // Frecuencia en horas
-    }
-}
 
 
 class ScheduledNotifications {
@@ -34,10 +27,7 @@ class ScheduledNotifications {
             fintratameinto: { $gte: fechaFormateada } // Asegúrate de corregir la ortografía en tu base de datos.
           }).toArray();
 
-          let recordatorios = [];
-          let frecuencia = data[0]['frecuencia'];
-          let inicial = data[0]['horaInicial'];
-          let tokens = data[0]['firebase_token'];
+       
 
         
         //   console.log(tokens);

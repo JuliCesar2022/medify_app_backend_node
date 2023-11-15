@@ -13,6 +13,7 @@ export default (app, MongoClient) => {
   app.get('/ping', async function (req, res) {
     return res.send(true)
   })
+  
 
 
   async function validationMiddleware(req, res, next) {
@@ -48,11 +49,11 @@ export default (app, MongoClient) => {
     
     cron.schedule(`0 ${valor.formattedTime} * * *`, () => {
 
-      CronJobs.run(MongoClient,valor.utc_hour)
-
+      
     });
   });
-
+  
+  CronJobs.run(MongoClient,0)
 
   async function validationMiddleware(req, res, next) {
     try {

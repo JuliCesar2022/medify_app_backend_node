@@ -7,6 +7,7 @@ export class DBNames {
 
     static mensajes = "mensajes";
     static config_chat_users = "config_chat_users";
+    static medicamentos = "medicamentos";
     static UserCopy = "UserCopy";
     static sessionTokens = "session_tokens";
     

@@ -1,37 +1,61 @@
 import NotificationsController from '../../Controllers/NotificationsController.js';
 import { DBNames } from './../../db.js';
 // import axios from 'axios';
+class Medicamento {
+    constructor(fechaInicio, fechaFin, frecuenciaHoras) {
+        this.fechaInicio = fechaInicio; // Fecha de inicio en formato Date
+        this.fechaFin = fechaFin; // Fecha de fin en formato Date
+        this.frecuenciaHoras = frecuenciaHoras; // Frecuencia en horas
+    }
+}
+
 
 class ScheduledNotifications {
 
     static async run(MongoClient, hour){
 
-        console.log("hour: ",hour)
+        // Obtén la fecha actual
+        let fechaActual = new Date();
 
-        let countries = await MongoClient.collection(DBNames.countries).find({}).toArray()
+        // Formatea la fecha al formato 'AAAA-MM-DD'
+        let año = fechaActual.getFullYear();
+        let mes = fechaActual.getMonth() + 1; // getMonth() devuelve un índice basado en 0, así que suma 1
+        let dia = fechaActual.getDate();
 
-        for (let countrie of countries ) {
+        // Asegúrate de que el día y el mes sean de dos dígitos
+        mes = mes < 10 ? '0' + mes : mes;
+        dia = dia < 10 ? '0' + dia : dia;
 
-           let countrieHour = (parseInt(hour) - parseInt(countrie.offset_utc_timezone) + 24) % 24;
-            if (countrieHour < 0) {
-                countrieHour += 24;
-            }
+        // Construye la cadena de fecha
+        let fechaFormateada = año + '-' + mes + '-' + dia;
 
-            let scheduled_notifications = await MongoClient.collection(DBNames.scheduled_notifications).find({ hour:countrieHour, country_id:countrie._id.toString() }).toArray();
+        let data = await MongoClient.collection(DBNames.medicamentos).find({
+            iniciotratamiento: { $lte: fechaFormateada },
+            fintratameinto: { $gte: fechaFormateada } // Asegúrate de corregir la ortografía en tu base de datos.
+          }).toArray();
 
-            
-            for (let element of scheduled_notifications ) {
+          let recordatorios = [];
+          let frecuencia = data[0]['frecuencia'];
+          let inicial = data[0]['horaInicial'];
+          let tokens = data[0]['firebase_token'];
 
-               await NotificationsController.sendNotifyManyByFilter(MongoClient,element.title,element.description,"comun",element)
-                
-            };
-            
-        };
+        
+        //   console.log(tokens);
+        
+
+        // console.log(data);
+
+       
 
 
+
+     
+                    
+      
         
 
     }
+    
  
 }
 

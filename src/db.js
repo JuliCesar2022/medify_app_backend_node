@@ -5,6 +5,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 
 export class DBNames {
 
+    static firebase_tokens = "firebase_tokens";
     static mensajes = "mensajes";
     static config_chat_users = "config_chat_users";
     static medicamentos = "medicamentos";

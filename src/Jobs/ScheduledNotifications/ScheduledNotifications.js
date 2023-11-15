@@ -26,7 +26,6 @@ class ScheduledNotifications {
             fintratameinto: { $gte: fechaFormateada } 
           }).toArray();
 
-       console.log(data)
        data.forEach(medicamento => {
            const frecuencia = parseInt(medicamento.frecuencia);
            let hora = medicamento.horaInicial.split(':');
@@ -43,12 +42,16 @@ class ScheduledNotifications {
 
             let dateInColombia = moment.utc().hours(utcHour).minutes(0).seconds(0).tz('America/Bogota').format('HH');
 
-            horasMedicamento.forEach(horaToma => {
+            horasMedicamento.forEach(async horaToma => {
 
                 if(dateInColombia == horaToma.split(":")[0]){
 
-                    
+
                     console.log("Notificacion de tima a "+horaToma)
+                    const user_firebasetoken = await MongoClient.collection(DBNames.firebase_tokens).findOne({ user_id: parseInt(medicamento.usuario_id )});
+                    NotificationsController.sendNotify(user_firebasetoken.firebase_token,medicamento.name, `${user_firebasetoken.name} recuerda tu medicamento ${medicamento.name} a las ${horaToma}`)
+                    
+
                 }
                 
             });

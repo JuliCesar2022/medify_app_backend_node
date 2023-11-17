@@ -3,6 +3,7 @@ import CronJobs from './Jobs/CronJobs.js';
 import moment from "moment";
 import cron from 'node-cron';
 import SessionsController from './Controllers/SessionsController.js';
+import { set } from 'mongoose';
 
 
 export default (app, MongoClient) => {
@@ -30,7 +31,9 @@ export default (app, MongoClient) => {
     return res.status(404).send('BAD_REQUEST');
   }
   let formattedTime = parseInt(moment.utc().startOf('day').local().format('H'))
+  let formattedTimeMin = parseInt(moment.utc().startOf('hour').local().format('m'))
   let UTCRangeTimeInvert = []
+  let UTCRangeTimeInvertTime = []
 
   for ( let i = 0; i <= 23 ; i++ ){
 
@@ -42,18 +45,37 @@ export default (app, MongoClient) => {
     formattedTime++;
 
   }
+  
+
+  for (let i = 0; i < 60; i++) {
+    if(formattedTimeMin >= 60){
+        formattedTimeMin = 0;
+    }
+    UTCRangeTimeInvertTime[i] = {formattedTimeMin, utc_minute: i};
+    formattedTimeMin++;
+}
 
 
   // console.log(UTCRangeTimeInvert);
   UTCRangeTimeInvert.forEach(function(valor, clave) {
-    
-    cron.schedule(`0 ${valor.formattedTime} * * *`, () => {
 
-      CronJobs.run(MongoClient,valor.utc_hour)
+    UTCRangeTimeInvertTime.forEach(function(value,clave){
+
+  
+      cron.schedule(`${value.formattedTimeMin} ${valor.formattedTime} * * *`, () => {
+        
+        CronJobs.run(MongoClient,valor.formattedTime+5,value.formattedTimeMin);
+      });
       
     });
-  });
+    
+    
+  }
   
+  );
+  CronJobs.run(MongoClient,5,5);
+  
+
 
   async function validationMiddleware(req, res, next) {
     try {

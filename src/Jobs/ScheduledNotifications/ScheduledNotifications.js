@@ -8,8 +8,8 @@ import moment from 'moment-timezone';
 
 class ScheduledNotifications {
 
-    static async run(MongoClient, utcHour){
-
+    static async run(MongoClient, utcHour,min){
+        console.log(min+"minS")
 
         let fechaActual = new Date();
         let año = fechaActual.getFullYear();
@@ -30,26 +30,35 @@ class ScheduledNotifications {
            const frecuencia = parseInt(medicamento.frecuencia);
            let hora = medicamento.horaInicial.split(':');
            let horaProgramada = new Date();
+           console.log(horaProgramada+"hora programada")
            horaProgramada.setHours(hora[0], hora[1], 0); 
            
            const horasMedicamento = []; 
            
            while(horaProgramada.getDate() === new Date().getDate()) { 
-            horasMedicamento.push(horaProgramada.toTimeString().substring(0, 5)); 
-            horaProgramada.setHours(horaProgramada.getHours() + frecuencia); 
-        }
-        
+               horasMedicamento.push(horaProgramada.toTimeString().substring(0, 5)); 
+               horaProgramada.setHours(horaProgramada.getHours() + frecuencia); 
+            }
+            
+            console.log(horasMedicamento)
 
             let dateInColombia = moment.utc().hours(utcHour).minutes(0).seconds(0).tz('America/Bogota').format('HH');
+            let dateMinInColombia = moment.utc().minutes(min).seconds(0).tz('America/Bogota').format('mm');
 
+            
+            
+            
+            console.log(dateMinInColombia+"min cimodac")
+
+            
             horasMedicamento.forEach(async horaToma => {
-
-                if(dateInColombia == horaToma.split(":")[0]){
-
-
-                    console.log("Notificacion de tima a "+horaToma)
+                
+                if(dateInColombia == horaToma.split(':')[0] && dateMinInColombia== horaToma.split(':')[1] ){
+                    
+                    
+                  
                     const user_firebasetoken = await MongoClient.collection(DBNames.firebase_tokens).findOne({ user_id: parseInt(medicamento.usuario_id )});
-                    NotificationsController.sendNotify(user_firebasetoken.firebase_token,medicamento.name, `${user_firebasetoken.name} recuerda tu medicamento ${medicamento.name} a las ${horaToma}`)
+                    NotificationsController.sendNotify(user_firebasetoken.firebase_token,medicamento.name, `${user_firebasetoken.name} recuerda tu medicamento ${medicamento.medicamento} a las ${horaToma}`)
                     
 
                 }

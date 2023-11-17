@@ -13,6 +13,7 @@ class NotificationsController {
         console.log("#SEND title:"+title)
         console.log("body:"+body)
         const data = {
+         
             rules_version: '2',
             notification: {
                 body: body,
@@ -24,7 +25,7 @@ class NotificationsController {
                 body: body,
                 title: title,
                 data: {},
-                tipo: tipo
+                tipo: tipo,
             },
             to: fcmToken
         };

@@ -9,9 +9,14 @@ import moment from 'moment-timezone';
 class ScheduledNotifications {
 
     static async run(MongoClient, utcHour,min){
-        console.log(min+"minS")
 
-        let fechaActual = new Date();
+        let fechaActualColombia = moment.utc().day(0).hours(utcHour).minutes(min).tz('America/Bogota').format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ');
+        let fechaFormated = new Date(Date.parse(fechaActualColombia))
+
+       
+       
+
+        let fechaActual = fechaFormated
         let año = fechaActual.getFullYear();
         let mes = fechaActual.getMonth() + 1; 
         let dia = fechaActual.getDate();
@@ -21,54 +26,40 @@ class ScheduledNotifications {
 
         let fechaFormateada = año + '-' + mes + '-' + dia;
 
+        console.log(fechaFormateada)
+
         let data = await MongoClient.collection(DBNames.medicamentos).find({
             iniciotratamiento: { $lte: fechaFormateada },
             fintratameinto: { $gte: fechaFormateada } 
           }).toArray();
-console.log(utcHour, "utccc");
-       data.forEach(medicamento => {
+
+
+        data.forEach( async medicamento => {
+        
            const frecuencia = parseInt(medicamento.frecuencia);
+           const id = parseInt(medicamento._id);
+           console.log(id )
            let hora = medicamento.horaInicial.split(':');
-           let horaProgramada = new Date();
-           console.log(horaProgramada+"hora programada")
-           horaProgramada.setHours(hora[0], hora[1], 0); 
-           
-           const horasMedicamento = []; 
-           
-           while(horaProgramada.getDate() === new Date().getDate()) { 
-               horasMedicamento.push(horaProgramada.toTimeString().substring(0, 5)); 
-               horaProgramada.setHours(horaProgramada.getHours() + frecuencia); 
-            }
-            
-            console.log(horasMedicamento)
 
-            let dateInColombia = moment.utc().hours(utcHour).minutes(0).seconds(0).tz('America/Bogota').format('HH');
-            
-            let dateMinInColombia = moment.utc().minutes(min).seconds(0).tz('America/Bogota').format('mm');
+           console.log(hora+"horaaaa")
 
-            console.log(dateInColombia+ ':'+dateMinInColombia+"'colombia'")
-            
-            
-            
-            
-            console.log(dateMinInColombia+"min cimodac")
-            
-            
-            horasMedicamento.forEach(async horaToma => {
-                console.log(dateInColombia+ ':'+horaToma+"'colombia'")
-                
-                if(dateInColombia == horaToma.split(':')[0] && dateMinInColombia== horaToma.split(':')[1] ){
-                    
-                    
-                  
+                        console.log(parseInt(hora[0]))
+                        console.log(fechaFormated.getHours())
+                        console.log(parseInt(hora[1]))
+                        console.log(fechaFormated.getMinutes())
+                        
+                       
+                        if(parseInt(hora[0])=== fechaFormated.getHours() && parseInt(hora[1]) === fechaFormated.getMinutes() ){
+                  const medicament= await MongoClient.collection(DBNames.medicamentos).updateOne({ _id: medicamento._id }, { $set: { 'horaInicial': parseInt(hora[0])+frecuencia+":"+hora[1]  } });
+                  console.log('sonar');
                     const user_firebasetoken = await MongoClient.collection(DBNames.firebase_tokens).findOne({ user_id: parseInt(medicamento.usuario_id )});
-                    NotificationsController.sendNotify(user_firebasetoken.firebase_token,medicamento.name, `${user_firebasetoken.name} recuerda tu medicamento ${medicamento.medicamento} a las ${horaToma}`)
+                    NotificationsController.sendNotify(user_firebasetoken.firebase_token,medicamento.name, `${user_firebasetoken.name} recuerda tu medicamento ${medicamento.medicamento} a las ${medicamento.horaInicial}`)
                     
 
                 }
                 
             });
-          });
+          
         
         
           

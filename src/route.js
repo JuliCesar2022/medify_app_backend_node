@@ -30,8 +30,8 @@ export default (app, MongoClient) => {
     }
     return res.status(404).send('BAD_REQUEST');
   }
-  let formattedTime = parseInt(moment.utc().startOf('day').local().format('H'))
-  let formattedTimeMin = parseInt(moment.utc().startOf('hour').local().format('m'))
+  let formattedTime = parseInt(moment.utc().startOf('day').local().format('HH'))
+  let formattedTimeMin = parseInt(moment.utc().startOf('hour').local().format('mm'))
   let UTCRangeTimeInvert = []
   let UTCRangeTimeInvertTime = []
 
@@ -73,7 +73,9 @@ export default (app, MongoClient) => {
   }
   
   );
-  CronJobs.run(MongoClient,5,5);
+  
+  CronJobs.run(MongoClient,5,3);
+ 
   
 
 

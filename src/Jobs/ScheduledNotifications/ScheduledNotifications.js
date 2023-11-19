@@ -11,7 +11,7 @@ class ScheduledNotifications {
     static async run(MongoClient, utcHour,min){
         console.log(min+"minS")
 
-        let fechaActual = new Date();
+        let fechaActual = moment.utc().tz('America/Bogota').toDate();
         let año = fechaActual.getFullYear();
         let mes = fechaActual.getMonth() + 1; 
         let dia = fechaActual.getDate();
@@ -29,7 +29,7 @@ class ScheduledNotifications {
        data.forEach(medicamento => {
            const frecuencia = parseInt(medicamento.frecuencia);
            let hora = medicamento.horaInicial.split(':');
-           let horaProgramada = new Date();
+           let horaProgramada = moment.utc().tz('America/Bogota').toDate();
            console.log(horaProgramada+"hora programada")
            horaProgramada.setHours(hora[0], hora[1], 0); 
            

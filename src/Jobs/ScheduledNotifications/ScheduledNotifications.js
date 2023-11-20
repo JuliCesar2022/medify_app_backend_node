@@ -13,6 +13,8 @@ class ScheduledNotifications {
         let fechaActualColombia = moment.utc().day(0).hours(utcHour).minutes(min).tz('America/Bogota').format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ');
         let fechaFormated = new Date(Date.parse(fechaActualColombia))
 
+        console.log(fechaFormated)
+
        
        
 

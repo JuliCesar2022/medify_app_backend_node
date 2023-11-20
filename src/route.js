@@ -64,7 +64,7 @@ export default (app, MongoClient) => {
   
       cron.schedule(`${value.formattedTimeMin} ${valor.formattedTime} * * *`, () => {
         
-        CronJobs.run(MongoClient,valor.formattedTime+5,value.formattedTimeMin);
+        CronJobs.run(MongoClient,valor.formattedTime-5,value.formattedTimeMin);
       });
       
     });
@@ -74,7 +74,7 @@ export default (app, MongoClient) => {
   
   );
   
-  CronJobs.run(MongoClient,5,3);
+ 
  
   
 
